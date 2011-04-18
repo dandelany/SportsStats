@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+<link href="css/styles.css" rel="stylesheet" type="text/css" />
+<!--
+<script type="text/javascript" src="/media/js/protovis-3.2/protovis-d3.2.js"></script>
+<script type="text/javascript" src="/media/js/jquery-1.4.4.js"></script>
+<script type="text/javascript" src="/media/js/raphael/raphael.js"></script>
+<script type="text/javascript" src="/media/js/raphael/g.raphael.js"></script>
+<script type="text/javascript" src="/media/js/raphael/g.bar.js"></script>
+-->
+
+<!-- <script type="text/javascript" src="/media/js/charts/histogram2.js"></script> -->
+
+<script type="text/javascript" src="/site_media/js/flot/flot-read-only/jquery.js"></script>
+<script type="text/javascript" src="/site_media/js/flot/flot-read-only/jquery.flot.js"></script>
+<script type="text/javascript" src="/site_media/js/jquery.sparkline.js"></script>
+
+<style type="text/css">
+body {
+	font-family: Arial;
+	font-size: 13px;
+}
+
+#fig {
+  width: 600px;
+  height: 300px;
+}
+#wrapper {
+	width:600px;
+	margin: 0 auto;
+}
+#wrapper table {
+	width:550px;
+	margin:10px 25px;
+	border:1px solid #AAA;
+	text-align: center;
+}
+#wrapper table thead tr{
+	background:#AAA;
+	text-align: center;
+}
+#wrapper table tbody tr:nth-child(odd){
+
+	background-color: #d5edff;
+
+}
+#wrapper table tbody td.teamCell {
+	text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+var stack = 0, bars = true, lines = false, steps = false;
+
+function plotWithOptions() {
+    $.plot($("#fig"), [MarginList], {
+        series: {
+            lines: { show: lines, steps: steps },
+            bars: { show: bars, barWidth: 0.6 }
+        }
+    });
+}
+
+$(document).ready(function(){
+		
+	//makeHistogram();
+	plotWithOptions();
+	
+	$.each(MarginsByTeam, function(key,value) {
+		$('#spark'+key).sparkline(value, { type:'tristate' });
+	});
+	
+});
+</script>
+
+
+
+
+
+{% if teamStats %}
+<div id="wrapper">
+<div id="fig"></div>
+<table border="0" cellpadding="4" cellspacing="0">
+	<thead>
+		<tr>
+			<td>Team</td>
+			<td>Win Ratio</td>
+			<td>Games Won/Lost</td>
+		</tr>
+	</thead>
+	<tbody>
+	    {% for team in teamStats %}
+	    <tr>
+	        <td class="teamCell"><a href="/nba/teams/{{ team.id }}/">{{ team.name }}</a></td>
+	        <td>{{ team.wlr.wlr }}</td>
+	        <td><div id="spark{{ team.id }}"></div></td>
+	    </tr>
+	    {% endfor %}
+	    
+	</tbody>
+</table>
+</div>
+    
+    
+    AVG: {{ marginAvg }}
+    {{ tieListJSON }}
+    
+    {{ teamStatsJSON }}
+    
+    {{ marginListJSON }}
+    <br />
+    
+    {{ marginsByTeamJSON }}
+    <br />
+    leagueSpreads {{ leagueSpreadsJSON }}
+    
+{% else %}
+    <p>No teams are available. Something is broken.</p>
+{% endif %}
+
+<script type="text/javascript">
+	MarginList = {{ marginListJSON|safe }};
+	MarginsByTeam = {{ marginsByTeamJSON|safe }};
+</script>
+</body>
+</html>
+
+
+

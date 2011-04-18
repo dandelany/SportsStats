@@ -1,0 +1,14 @@
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+
+# Compiled python
+*.pyc
+
+# Django settings file
+settings.py

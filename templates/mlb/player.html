@@ -1,0 +1,174 @@
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+<link href="css/styles.css" rel="stylesheet" type="text/css" />
+<!--
+<script type="text/javascript" src="/media/js/protovis-3.2/protovis-d3.2.js"></script>
+<script type="text/javascript" src="/media/js/jquery-1.4.4.js"></script>
+<script type="text/javascript" src="/media/js/raphael/raphael.js"></script>
+<script type="text/javascript" src="/media/js/raphael/g.raphael.js"></script>
+<script type="text/javascript" src="/media/js/raphael/g.bar.js"></script>
+-->
+
+<!-- <script type="text/javascript" src="/media/js/charts/histogram2.js"></script> -->
+
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/flot-read-only/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/flot-read-only/jquery.flot.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.sparkline.js"></script>
+
+<style type="text/css">
+body {
+	font-family: Arial;
+	font-size: 13px;
+}
+
+#fig {
+  width: 600px;
+  height: 300px;
+}
+#wrapper {
+	xwidth:600px;
+	margin: 0 auto;
+}
+#wrapper table {
+	width:550px;
+	margin:10px 25px;
+	border:1px solid #AAA;
+	text-align: center;
+}
+#wrapper table thead tr{
+	background:#AAA;
+	text-align: center;
+}
+#wrapper table tbody tr:nth-child(odd){
+
+	background-color: #d5edff;
+
+}
+#wrapper table tbody td.teamCell {
+	text-align: left;
+}
+.chartStat {
+	text-decoration: underline;
+	cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+$(function() {
+	
+	
+
+	function plotWithOptions(column) {
+		
+		data = [];
+		years = $('.Year')
+		
+		$.each($('.'+column), function(index,value) {
+		    data.push([
+				parseInt(years[index].innerHTML),
+				parseInt(value.innerHTML)
+			]);
+		});
+
+		var stack = 0, bars = true, lines = false, steps = false;
+		
+	    $.plot($("#fig"), [
+	        {
+	            data: data,
+	            bars: { show: true }
+				/*
+				xaxis: { 
+					mode: 'time',
+					min: new Date(parseInt(years[0].innerHTML), 1, 1),
+					max: new Date(parseInt(years[years.length-1].innerHTML), 1, 1)
+				}
+				*/
+	        }
+	    ]);
+	};
+
+	plotWithOptions('HR');
+	
+	$('.chartStat').bind('click', function(event) {
+		plotWithOptions(event.target.innerHTML)
+	})
+	
+})
+
+</script>
+
+<div id="wrapper">
+<div id="fig"></div>
+<h2>{{ player }}</h2>
+
+<table border="0" cellpadding="4" cellspacing="0">
+	<thead>
+		<tr>
+			<td class="chartStat">Year</td>
+			<td class="chartStat">Games<td>
+			<td class="chartStat">GBatting<td>
+			<td class="chartStat">AB<td>
+			<td class="chartStat">R<td>
+			<td class="chartStat">H<td>
+			<td class="chartStat">D<td>
+			<td class="chartStat">T<td>
+			<td class="chartStat">HR<td>
+			<td class="chartStat">RBI<td>
+			<td class="chartStat">SB<td>
+			<td class="chartStat">CS<td>
+			<td class="chartStat">BOB<td>
+			<td class="chartStat">SO<td>
+			<td class="chartStat">IW<td>
+			<td class="chartStat">HBP<td>
+			<td class="chartStat">SH<td>
+			<td class="chartStat">SF<td>
+			<td class="chartStat">GIDP<td>
+		</tr>
+	</thead>
+	<tbody>
+	    {% for season in seasons %}
+	    <tr>
+			<td class="Year">{{ season.Year }}</td>
+			<td class="Games">{{ season.Games }}<td>
+			<td class="GBatting">{{ season.GamesBatting }}<td>
+			<td class="AB">{{ season.AtBats }}<td>
+			<td class="R">{{ season.Runs }}<td>
+			<td class="H">{{ season.Hits }}<td>
+			<td class="D">{{ season.Doubles }}<td>
+			<td class="T">{{ season.Triples }}<td>
+			<td class="HR">{{ season.Homeruns }}<td>
+			<td class="RBI">{{ season.RunsBattedIn }}<td>
+			<td class="SB">{{ season.StolenBases }}<td>
+			<td class="CS">{{ season.CaughtStealing }}<td>
+			<td class="BOB">{{ season.BaseOnBalls }}<td>
+			<td class="SO">{{ season.Strikeouts }}<td>
+			<td class="IW">{{ season.IntentionalWalks }}<td>
+			<td class="HBP">{{ season.HitByPitch }}<td>
+			<td class="SH">{{ season.SacrificeHits }}<td>
+			<td class="SF">{{ season.SacrificeFlies }}<td>
+			<td class="GIDP">{{ season.GroundedIntoDouble }}<td>
+	    </tr>
+	    {% endfor %}
+	    
+	</tbody>
+</table>
+
+
+</div>
+    
+
+    
+</body>
+</html>
+
+
+
