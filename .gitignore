@@ -12,3 +12,5 @@ Thumbs.db
 
 # Django settings file
 settings.py
+
+fabfile.py
