@@ -5,6 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+	(r'^$', 'mlb.views.index'),
     (r'^nba/$', 'nba.views.index'),
 	(r'^mlb/$', 'mlb.views.index'),
 	(r'^mlb/player/(?P<playerID>[a-z]+\d{2})/$', 'mlb.views.player'),
