@@ -1,9 +1,11 @@
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Untitled Document</title>
-<link href="css/styles.css" rel="stylesheet" type="text/css" />
+<title>Stats Champ</title>
+<!-- <link href="css/styles.css" rel="stylesheet" type="text/css" /> -->
 <!--
 <script type="text/javascript" src="/media/js/protovis-3.2/protovis-d3.2.js"></script>
 <script type="text/javascript" src="/media/js/jquery-1.4.4.js"></script>
@@ -14,9 +16,9 @@
 
 <!-- <script type="text/javascript" src="/media/js/charts/histogram2.js"></script> -->
 
-<script type="text/javascript" src="/site_media/js/flot/flot-read-only/jquery.js"></script>
-<script type="text/javascript" src="/site_media/js/flot/flot-read-only/jquery.flot.js"></script>
-<script type="text/javascript" src="/site_media/js/jquery.sparkline.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/flot-read-only/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/flot-read-only/jquery.flot.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.sparkline.js"></script>
 
 <style type="text/css">
 body {
@@ -25,30 +27,37 @@ body {
 }
 
 #fig {
-  width: 600px;
-  height: 300px;
+  width: 900px;
+  height: 250px;
 }
-#wrapper {
-	width:600px;
+#content {
 	margin: 0 auto;
 }
-#wrapper table {
+#content table {
 	width:550px;
 	margin:10px 25px;
 	border:1px solid #AAA;
 	text-align: center;
 }
-#wrapper table thead tr{
+#content table thead tr{
 	background:#AAA;
 	text-align: center;
 }
-#wrapper table tbody tr:nth-child(odd){
-
+#content table tbody tr:nth-child(odd){
 	background-color: #d5edff;
 
 }
-#wrapper table tbody td.teamCell {
+#content table tbody td.teamCell {
 	text-align: left;
+}
+#wrapper {
+	width:950px;
+	margin: 0 auto;
+}
+#header {
+	width:950px;
+	height:100px;
+	background:url('{{ STATIC_PREFIX }}images/header.jpg') bottom left no-repeat;
 }
 
 </style>
@@ -56,56 +65,67 @@ body {
 </head>
 
 <body>
+	
+
 
 <div id="wrapper">
-<h2>Home Run Leaders</h2>
-<table border="0" cellpadding="4" cellspacing="0">
-	<thead>
-		<tr>
-			<td>Player</td>
-		</tr>
-	</thead>
-	<tbody>
-	    {% for leader in homeRunLeaders %}
-	    <tr>
-	        <td class="teamCell"><a href="/mlb/player/{{ leader.Player.PlayerID }}/">{{ leader }}</a></td>
-	    </tr>
-	    {% endfor %}
-	    
-	</tbody>
-</table>
+	<div id="header"></div>
+	
+	<div id="content">
+	<h2>Home Run Leaders</h2>
+	<div id="fig"></div>
+	<table border="0" cellpadding="4" cellspacing="0">
+		<thead>
+			<tr>
+				<td>Player</td>
+			</tr>
+		</thead>
+		<tbody>
+		    {% for leader in homeRunLeaders %}
+		    <tr>
+		        <td class="teamCell"><a href="/mlb/player/{{ leader.Player.PlayerID }}/">{{ leader }}</a></td>
+		    </tr>
+		    {% endfor %}
 
-<table border="0" cellpadding="4" cellspacing="0">
-	<thead>
-		<tr>
-			<td>First Name</td>
-			<td>Last Name</td>
-		</tr>
-	</thead>
-	<tbody>
-	    {% for player in players %}
-	    <tr>
-	        <td class="teamCell"><a href="/mlb/player/{{ player.PlayerID }}/">{{ player.FirstName }}</a></td>
-	        <td>{{ player.LastName }}</td>
-	    </tr>
-	    {% endfor %}
-	    
-	</tbody>
-</table>
+		</tbody>
+	</table>
+	</div>
 </div>
-    
-    
-    AVG: {{ marginAvg }}
-    {{ tieListJSON }}
-    
-    {{ teamStatsJSON }}
-    
-    {{ marginListJSON }}
-    <br />
-    
-    {{ marginsByTeamJSON }}
-    <br />
-    leagueSpreads {{ leagueSpreadsJSON }}
+
+
+
+<script type="text/javascript">
+
+LeaderCareers = {{ leaderCareersJSON|safe }};
+
+$(function() {
+
+	function plotWithOptions(column) {
+		
+		plotData = [];
+		years = $('.Year')
+		
+		$.each(LeaderCareers, function(index,value) {
+		    plotData.push({
+				data: value['seasons'],
+				lines: { show: true }
+			});
+		});
+
+		var stack = 0, bars = true, lines = false, steps = false;
+		
+	    $.plot($("#fig"), plotData);
+	};
+
+	plotWithOptions('HR');
+	
+	$('.chartStat').bind('click', function(event) {
+		plotWithOptions(event.target.innerHTML)
+	})
+	
+})
+
+</script>
     
 </body>
 </html>

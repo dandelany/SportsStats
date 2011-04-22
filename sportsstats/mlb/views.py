@@ -11,9 +11,35 @@ def index(request):
 	
 	homeRunLeaders = PlayerBatting.objects.order_by('-Homeruns')[:50]
 	
+	leaderCareers = []
+	leaderIDs = []
+	
+	for leader in homeRunLeaders:
+		
+		playerID = leader.Player.PlayerID
+		if playerID not in leaderIDs:
+			
+			seasons = []
+			leaderCareer = {
+				'id': playerID,
+				'seasons': seasons
+			}
+		
+			leaderSeasons = PlayerBatting.objects.filter(Player=leader.Player)
+			homeRunSum = 0;
+			for season in leaderSeasons:
+				homeRunSum += season.Homeruns
+				leaderCareer['seasons'].append([season.Year, homeRunSum])
+			leaderCareers.append(leaderCareer)
+			leaderIDs.append(playerID)
+		
+	
+	leaderCareersJSON = json.dumps(leaderCareers)
+	
 	return render_to_response('mlb/index.html', 
 		{'players': players, 
-		'homeRunLeaders': homeRunLeaders})
+		'homeRunLeaders': homeRunLeaders,
+		'leaderCareersJSON':leaderCareersJSON})
 		
 def player(request, playerID):
 	
