@@ -42,7 +42,7 @@ class Player(models.Model):
 		return self.FirstName + " " + self.LastName
 
 
-class PlayerBatting(models.Model):
+class PlayerBattingSeason(models.Model):
 	Player = models.ForeignKey(Player)
 	
 	Year = models.IntegerField()
