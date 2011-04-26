@@ -5,14 +5,42 @@ from django.db import models
 class Player(models.Model):
 	PlayerID = models.CharField(max_length=12)
 	PlayerID.primary_key = True
-	
 	LahmanID = models.IntegerField()
 	
 	LastName = models.CharField(max_length=20)
 	FirstName = models.CharField(max_length=15)
+	GivenName = models.CharField(max_length=50, null=True)
+	NickName = models.CharField(max_length=50, null=True)
+	NameNote = models.CharField(max_length=127, null=True)
+	
+	BirthYear = models.IntegerField(null=True)
+	BirthMonth = models.IntegerField(null=True)
+	BirthDay = models.IntegerField(null=True)
+	BirthCountry = models.CharField(max_length=25, null=True)
+	BirthState = models.CharField(max_length=2, null=True)
+	BirthCity = models.CharField(max_length=32, null=True)
+	
+	DeathYear = models.IntegerField(null=True)
+	DeathMonth = models.IntegerField(null=True)
+	DeathDay = models.IntegerField(null=True)
+	DeathCountry = models.CharField(max_length=35, null=True)
+	DeathState = models.CharField(max_length=2, null=True)
+	DeathCity = models.CharField(max_length=32, null=True)
+	
+	Weight = models.IntegerField(null=True)
+	Height = models.IntegerField(null=True)
+	
+	BatHand = models.CharField(max_length=1, null=True)
+	ThrowHand = models.CharField(max_length=1, null=True)
+	
+	DebutDate = models.CharField(max_length=18, null=True)
+	FinalGameDate = models.CharField(max_length=18, null=True)
+	
+	College = models.CharField(max_length=50, null=True)
 	
 	def __unicode__(self):
 		return self.FirstName + " " + self.LastName
+
 
 class PlayerBatting(models.Model):
 	Player = models.ForeignKey(Player)
