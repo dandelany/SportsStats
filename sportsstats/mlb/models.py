@@ -71,3 +71,28 @@ class PlayerBattingSeason(models.Model):
 	
 	def __unicode__(self):
 		return str(self.Year) + " " + str(self.Player)
+
+class PlayerBattingCareer(models.Model):
+	Player = models.ForeignKey(Player)
+	
+	Games = models.IntegerField()
+	GamesBatting = models.IntegerField()
+	AtBats = models.IntegerField()
+	Runs = models.IntegerField()
+	Hits = models.IntegerField()
+	Doubles = models.IntegerField()
+	Triples = models.IntegerField()
+	Homeruns = models.IntegerField()
+	RunsBattedIn = models.IntegerField()
+	StolenBases = models.IntegerField()
+	CaughtStealing = models.IntegerField()
+	BaseOnBalls = models.IntegerField()
+	Strikeouts = models.IntegerField()
+	IntentionalWalks = models.IntegerField()
+	HitByPitch = models.IntegerField()
+	SacrificeHits = models.IntegerField()
+	SacrificeFlies = models.IntegerField()
+	GroundedIntoDouble = models.IntegerField()
+
+	def __unicode__(self):
+		return str(self.Player)
