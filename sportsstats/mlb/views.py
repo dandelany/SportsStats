@@ -1,5 +1,5 @@
 from __future__ import division
-from models import Player, PlayerBattingSeason
+from models import Player, PlayerBattingSeason, PlayerBattingCareer
 from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import Http404
@@ -9,7 +9,7 @@ import json
 def index(request):
 	players = Player.objects.all()[:100]
 	
-	homeRunLeaders = PlayerBattingSeason.objects.order_by('-Homeruns')[:50]
+	homeRunLeaders = PlayerBattingCareer.objects.order_by('-Homeruns')[:30]
 	
 	leaderCareers = []
 	leaderIDs = []
