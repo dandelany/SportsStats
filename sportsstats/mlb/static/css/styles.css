@@ -3,6 +3,7 @@ body {
 	font-family: Arial;
 	font-size: 13px;
 	background-color: #ddd;
+	background-image: url('../images/bg.png');
 }
 
 #wrapper {
@@ -11,6 +12,10 @@ body {
 	border: 1px solid #333;
 	border-width: 0px 1px;
 	background-color: #fff;
+	
+	box-shadow: 0px 0px 20px #000;
+	-moz-box-shadow: 0px 0px 20px #000;
+	-webkit-box-shadow: 0px 0px 20px #000;
 }
 #header {
 	width:950px;
@@ -26,7 +31,10 @@ body {
 	border-top: 1px solid #6c95c2;
 	border-bottom: 1px solid #6c95c2;
 	text-shadow: 2px 1px 2px #111111;
+	
+	box-shadow: 0px 2px 3px #111111;
 	-moz-box-shadow: 0px 2px 3px #111111;
+	-webkit-box-shadow: 0px 2px 3px #111111;
 }
 #nav ul, #nav li
 {
@@ -40,9 +48,15 @@ body {
 }
 #nav li.first { margin-left: 0px; }
 #nav li.selected {
+	border: 1px solid #6C95C2;
+	
+	border-radius: 7px 7px 7px 7px;
 	-moz-border-radius: 7px 7px 7px 7px;
+	-webkit-border-radius: 7px 7px 7px 7px;
+	
+	box-shadow: 0 0 2px #6C95C2;
     -moz-box-shadow: 0 0 2px #6C95C2;
-    border: 1px solid #6C95C2;
+    -webkit-box-shadow: 0 0 2px #6C95C2;
 }
 #nav li.disabled {
 	-moz-box-shadow: none;
@@ -51,7 +65,7 @@ body {
 }
 
 #content {
-	margin: 0 40px;
+	margin: 0 42px;
 }
 #fig {
   width: 870px;
@@ -59,7 +73,7 @@ body {
 }
 #content table {
 	width: 550px;
-	margin: 10px 25px;
+	margin: 10px 0px;
 	border: 1px solid #AAA;
 	text-align: center;
 }
