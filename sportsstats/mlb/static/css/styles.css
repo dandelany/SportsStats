@@ -95,4 +95,20 @@ body {
 #content table tbody td.teamCell {
 	text-align: left;
 }
+div.tooltip {
+	display: none;
+	position: absolute;
+	background: #eee;
+	border: 1px solid #333;
+	padding: 4px;
+	font-size: 10px;
+	
+	box-shadow: 0 0 7px #999;
+	-moz-box-shadow: 0 0 7px #999;
+	-webkit-box-shadow: 0 0 7px #999;
+	
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
 

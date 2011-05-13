@@ -62,10 +62,14 @@ $(function() {
 
 		var stack = 0, bars = true, lines = false, steps = false;
 		
-	    $.plot($("#fig"), [
+	    $.plot($("#fig"), [{data:data}],
 	        {
-	            data: data,
-	            bars: { show: true }
+	            bars: { 
+	            	show: true
+	            },
+	            yaxis: {
+	            	position: "right"
+	            }
 				/*
 				xaxis: { 
 					mode: 'time',
@@ -74,7 +78,7 @@ $(function() {
 				}
 				*/
 	        }
-	    ]);
+	    );
 	};
 
 	plotWithOptions('HR');

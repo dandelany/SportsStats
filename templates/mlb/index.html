@@ -20,7 +20,6 @@
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-1.5.1.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-ui-1.8.12.custom.min.js"></script>
 
-
 <!-- <script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/jquery.js"></script> -->
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.sparkline.js"></script>
@@ -48,7 +47,7 @@
 	<table border="0" cellpadding="4" cellspacing="0">
 		<thead>
 			<tr>
-				<td>Player</td>
+				<td title="Tooltip text">Player</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -63,31 +62,81 @@
 	</div>
 </div>
 
-
+<div class="tooltip">Hello.</div>
 
 <script type="text/javascript">
 
 LeaderCareers = {{ leaderCareersJSON|safe }};
 
+function interpolateColor(minColor,maxColor,maxDepth,depth){
+
+    function d2h(d) {return d.toString(16);}
+    function h2d(h) {return parseInt(h,16);}
+   
+    if(depth == 0){
+        return minColor;
+    }
+    if(depth == maxDepth){
+        return maxColor;
+    }
+   
+    var color = "#";
+   
+    for(var i=1; i <= 6; i+=2){
+        var minVal = new Number(h2d(minColor.substr(i,2)));
+        var maxVal = new Number(h2d(maxColor.substr(i,2)));
+        var nVal = minVal + (maxVal-minVal) * (depth/maxDepth);
+        var val = d2h(Math.floor(nVal));
+        while(val.length < 2){
+            val = "0"+val;
+        }
+        color += val;
+    }
+    return color;
+}
+
 $(function() {
-	
-	
 
 	function plotWithOptions(column) {
 		
-		plotData = [];
-		years = $('.Year')
+		var plotData = [];
+		years = $('.Year');
+		
+		var minColor = "#cc1111";
+		var maxColor = "#777777";
+		var numLeaders = LeaderCareers.length;
 		
 		$.each(LeaderCareers, function(index,value) {
+			
+			lineColor = interpolateColor(
+				minColor, maxColor, LeaderCareers.length, index);
+				
 		    plotData.push({
 				data: value['seasons'],
-				lines: { show: true }
+				label: index,
+				lines: { show: true },
+				//points: { show: true },
+				hoverable: true,
+				clickable: true,
+				color: lineColor
 			});
 		});
+		
+		plotData.reverse();
+		
+		var plotOptions = {
+			grid: { 
+				hoverable:true, 
+				clickable: true,
+				backgroundColor: { colors: ["#faf8f6", "#e0e0e0"] }
+			},
+			legend: { show: false }
+		}
 
 		var stack = 0, bars = true, lines = false, steps = false;
 		
-	    $.plot($("#fig"), plotData);
+		
+	    $.plot($("#fig"), plotData, plotOptions);
 	};
 
 	plotWithOptions('HR');
@@ -95,6 +144,30 @@ $(function() {
 	$('.chartStat').bind('click', function(event) {
 		plotWithOptions(event.target.innerHTML)
 	})
+	
+	//$("#content td[title]").tooltip();
+	
+	function showTooltip(event, pos, item) {
+		if(item == null) $('.tooltip').hide();
+		else {
+			var tooltip = $('.tooltip');
+			var leaderIndex = item.series.label;
+			tooltip.html(
+				LeaderCareers[leaderIndex]['name'] + "<br />" +
+				"Career HRs: " + LeaderCareers[leaderIndex]['total'] + "<br />" +
+				"Rank: " + (leaderIndex + 1));
+			
+			$('.tooltip').css({left: pos.pageX - (tooltip.width() / 2), top: pos.pageY - (tooltip.height() + 20)}).show();
+		}
+	}
+	
+	$('#fig').bind('plothover', function (event, pos, item) {
+		showTooltip(event, pos, item);
+	});
+	$('#fig').bind('plotclick', function (event, pos, item) {
+		showTooltip(event, pos, item);
+	});
+	
 	
 })
 

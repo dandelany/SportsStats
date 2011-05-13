@@ -38,6 +38,24 @@ class Player(models.Model):
 	
 	College = models.CharField(max_length=50, null=True)
 	
+	def getCareerStats(self, column, isCumulative):
+		seasons = []
+		career = {
+			'id': self.PlayerID,
+			'name': self.FirstName + " " + self.LastName,
+			'seasons': seasons
+		}
+		
+		allSeasons = PlayerBattingSeason.objects.filter(Player=self).values(column, 'Year')
+		colSum = 0;
+		for season in allSeasons:
+			colSum += season[column]
+			dataToAdd = colSum if isCumulative else season[column]
+			career['seasons'].append([season['Year'], dataToAdd])
+		
+		career['total'] = colSum;
+		return career
+	
 	def __unicode__(self):
 		return self.FirstName + " " + self.LastName
 
@@ -93,6 +111,10 @@ class PlayerBattingCareer(models.Model):
 	SacrificeHits = models.IntegerField()
 	SacrificeFlies = models.IntegerField()
 	GroundedIntoDouble = models.IntegerField()
+
+#class PlayerHitLocationEvent(models.Model):
+#	RetroPlayer = models.CharField(max_length=8)
+#	HitLocation = models.CharField(max_length=5)
 
 	def __unicode__(self):
 		return str(self.Player)

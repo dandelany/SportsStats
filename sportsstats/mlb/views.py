@@ -19,17 +19,8 @@ def index(request):
 		playerID = leader.Player.PlayerID
 		if playerID not in leaderIDs:
 			
-			seasons = []
-			leaderCareer = {
-				'id': playerID,
-				'seasons': seasons
-			}
-		
-			leaderSeasons = PlayerBattingSeason.objects.filter(Player=leader.Player)
-			homeRunSum = 0;
-			for season in leaderSeasons:
-				homeRunSum += season.Homeruns
-				leaderCareer['seasons'].append([season.Year, homeRunSum])
+			
+			leaderCareer = leader.Player.getCareerStats('Homeruns', True)
 			leaderCareers.append(leaderCareer)
 			leaderIDs.append(playerID)
 		
