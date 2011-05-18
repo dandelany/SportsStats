@@ -87,6 +87,38 @@ class PlayerBattingSeason(models.Model):
 	SacrificeFlies = models.IntegerField()
 	GroundedIntoDouble = models.IntegerField()
 	
+	FIELDS = [
+		{ 'abbrev': 'Year', 'fieldName': 'Year' },
+		{ 'abbrev': 'Games', 'fieldName': 'Games' },
+		{ 'abbrev': 'GBatting', 'fieldName': 'GamesBatting' },
+		{ 'abbrev': 'AB', 'fieldName': 'AtBats' },
+		{ 'abbrev': 'R', 'fieldName': 'Runs' },
+		{ 'abbrev': 'H', 'fieldName': 'Hits' },
+		{ 'abbrev': 'D', 'fieldName': 'Doubles' },
+		{ 'abbrev': 'T', 'fieldName': 'Triples' },
+		{ 'abbrev': 'HR', 'fieldName': 'Homeruns' },
+		{ 'abbrev': 'RBI', 'fieldName': 'RunsBattedIn' },
+		{ 'abbrev': 'SB', 'fieldName': 'StolenBases' },
+		{ 'abbrev': 'CS', 'fieldName': 'CaughtStealing' },
+		{ 'abbrev': 'BOB', 'fieldName': 'BaseOnBalls' },
+		{ 'abbrev': 'SO', 'fieldName': 'Strikeouts' },
+		{ 'abbrev': 'IW', 'fieldName': 'IntentionalWalks' },
+		{ 'abbrev': 'HBP', 'fieldName': 'HitByPitch' },
+		{ 'abbrev': 'SH', 'fieldName': 'SacrificeHits' },
+		{ 'abbrev': 'SF', 'fieldName': 'SacrificeFlies' },
+		{ 'abbrev': 'GIDP', 'fieldName': 'GroundedIntoDouble' }
+	]
+	
+	def fieldLookup(self, key, value):
+		def find(f, seq):
+			"""Return first item in sequence where f(item) == True."""
+			for item in seq:
+				if f(item): 
+					return item
+			return false
+		
+		return find(lambda field: field[key] == value, self.FIELDS)
+	
 	def __unicode__(self):
 		return str(self.Year) + " " + str(self.Player)
 
@@ -111,10 +143,39 @@ class PlayerBattingCareer(models.Model):
 	SacrificeHits = models.IntegerField()
 	SacrificeFlies = models.IntegerField()
 	GroundedIntoDouble = models.IntegerField()
-
-#class PlayerHitLocationEvent(models.Model):
-#	RetroPlayer = models.CharField(max_length=8)
-#	HitLocation = models.CharField(max_length=5)
+	
+	FIELDS = [
+		{ 'abbrev': 'Player', 'fieldName': 'Player', 'longName': 'Player' },
+		{ 'abbrev': 'Games', 'fieldName': 'Games', 'longName': 'Games Played' },
+		{ 'abbrev': 'GBatting', 'fieldName': 'GamesBatting', 'longName': 'Games Batted' },
+		{ 'abbrev': 'AB', 'fieldName': 'AtBats', 'longName': 'At Bats' },
+		{ 'abbrev': 'R', 'fieldName': 'Runs', 'longName': 'Runs' },
+		{ 'abbrev': 'H', 'fieldName': 'Hits', 'longName': 'Hits' },
+		{ 'abbrev': 'D', 'fieldName': 'Doubles', 'longName': 'Doubles' },
+		{ 'abbrev': 'T', 'fieldName': 'Triples', 'longName': 'Triples' },
+		{ 'abbrev': 'HR', 'fieldName': 'Homeruns', 'longName': 'Home Runs' },
+		{ 'abbrev': 'RBI', 'fieldName': 'RunsBattedIn', 'longName': 'Runs Batted In' },
+		{ 'abbrev': 'SB', 'fieldName': 'StolenBases', 'longName': 'Stolen Bases' },
+		{ 'abbrev': 'CS', 'fieldName': 'CaughtStealing', 'longName': 'Caught Stealing' },
+		{ 'abbrev': 'BOB', 'fieldName': 'BaseOnBalls', 'longName': 'Base On Balls' },
+		{ 'abbrev': 'SO', 'fieldName': 'Strikeouts', 'longName': 'Strikeouts' },
+		{ 'abbrev': 'IW', 'fieldName': 'IntentionalWalks', 'longName': 'Intentional Walks' },
+		{ 'abbrev': 'HBP', 'fieldName': 'HitByPitch', 'longName': 'Hit By Pitch' },
+		{ 'abbrev': 'SH', 'fieldName': 'SacrificeHits', 'longName': 'Sacrifice Hits' },
+		{ 'abbrev': 'SF', 'fieldName': 'SacrificeFlies', 'longName': 'Sacrifice Flies' },
+		{ 'abbrev': 'GIDP', 'fieldName': 'GroundedIntoDouble', 'longName': 'Grounded Into Double Play' }
+	]
+	
+	@classmethod
+	def fieldLookup(cls, key, value):
+		def find(f, seq):
+			"""Return first item in sequence where f(item) == True."""
+			for item in seq:
+				if f(item): 
+					return item
+			return False
+		
+		return find(lambda field: field[key] == value, cls.FIELDS)
 
 	def __unicode__(self):
 		return str(self.Player)

@@ -2,35 +2,54 @@ from __future__ import division
 from models import Player, PlayerBattingSeason, PlayerBattingCareer
 from django.shortcuts import render_to_response
 from django.core import serializers
-from django.http import Http404
+from django.http import HttpResponse, Http404
 import json
 
 
 def index(request):
-	players = Player.objects.all()[:100]
-	
 	homeRunLeaders = PlayerBattingCareer.objects.order_by('-Homeruns')[:30]
 	
 	leaderCareers = []
 	leaderIDs = []
 	
 	for leader in homeRunLeaders:
-		
 		playerID = leader.Player.PlayerID
+		
 		if playerID not in leaderIDs:
-			
-			
 			leaderCareer = leader.Player.getCareerStats('Homeruns', True)
 			leaderCareers.append(leaderCareer)
-			leaderIDs.append(playerID)
-		
+			leaderIDs.append(playerID)	
 	
 	leaderCareersJSON = json.dumps(leaderCareers)
 	
 	return render_to_response('mlb/index.html', 
-		{'players': players, 
+		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
 		'homeRunLeaders': homeRunLeaders,
 		'leaderCareersJSON':leaderCareersJSON})
+
+def leaderApi(request, fieldAbbrev):
+	
+	thisField = PlayerBattingCareer.fieldLookup('abbrev', fieldAbbrev)
+	if thisField != False:
+	
+		leaders = PlayerBattingCareer.objects.order_by('-' + thisField['fieldName'])[:30]
+		leaderCareers = []
+		leaderIDs = []
+	
+		for leader in leaders:
+			playerID = leader.Player.PlayerID
+		
+			if playerID not in leaderIDs:
+				leaderCareer = leader.Player.getCareerStats(thisField['fieldName'], True)
+				leaderCareers.append(leaderCareer)
+				leaderIDs.append(playerID)	
+	
+		leaderCareersJSON = json.dumps(leaderCareers)
+	
+		return HttpResponse(leaderCareersJSON)
+	
+	else:
+		raise Http404
 		
 def player(request, playerID):
 	

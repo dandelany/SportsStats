@@ -42,8 +42,19 @@
 	</div>
 	
 	<div id="content">
-	<h2>Career Home Run Leaders</h2>
+	<h2 style="margin-bottom:0;">Career <span class="statFieldLongName">Home Run</span> Leaders</h2>
+	
+	<strong>Chartable Stats: </strong>
+	{% for field in playerBattingCareerFields %}
+		{% if field.fieldName != 'Player' %}
+			<a href="#" class="chartStat" field="{{ field.fieldName }}" longname="{{ field.longName }}">{{ field.abbrev }}</a> | 
+		{% endif %}
+	{% endfor %}
+	
 	<div id="fig"></div>
+	
+	
+	
 	<table border="0" cellpadding="4" cellspacing="0">
 		<thead>
 			<tr>
@@ -67,6 +78,30 @@
 <script type="text/javascript">
 
 LeaderCareers = {{ leaderCareersJSON|safe }};
+FieldAbbrev = "HR";
+
+$(function() {
+	plotLeaders();
+	bindTooltips();
+	
+	$('a.chartStat').bind('click', function (event) {
+		var fieldAbbrev = $(this).html();
+		var fieldLongName = $(this).attr('longname');
+		if (fieldAbbrev) {
+			$.get('/mlb/api/'+fieldAbbrev+"/", function(data) {
+				LeaderCareers = data;
+				plotLeaders();
+				updateFieldNamesOnPage(fieldAbbrev, fieldLongName);
+			}, 'json')
+		}
+		return false;
+	});
+})
+
+function updateFieldNamesOnPage(fieldAbbrev, fieldLongName) {
+	$('.statFieldLongName').html(fieldLongName);
+	FieldAbbrev = fieldAbbrev;
+}
 
 function interpolateColor(minColor,maxColor,maxDepth,depth){
 
@@ -95,81 +130,71 @@ function interpolateColor(minColor,maxColor,maxDepth,depth){
     return color;
 }
 
-$(function() {
-
-	function plotWithOptions(column) {
+function plotLeaders() {
+	
+	var plotData = [];
+	var minColor = "#cc1111";
+	var maxColor = "#777777";
+	var numLeaders = LeaderCareers.length;
+	
+	$.each(LeaderCareers, function(index,value) {
 		
-		var plotData = [];
-		years = $('.Year');
-		
-		var minColor = "#cc1111";
-		var maxColor = "#777777";
-		var numLeaders = LeaderCareers.length;
-		
-		$.each(LeaderCareers, function(index,value) {
+		lineColor = interpolateColor(
+			minColor, maxColor, LeaderCareers.length, index);
 			
-			lineColor = interpolateColor(
-				minColor, maxColor, LeaderCareers.length, index);
-				
-		    plotData.push({
-				data: value['seasons'],
-				label: index,
-				lines: { show: true },
-				//points: { show: true },
-				hoverable: true,
-				clickable: true,
-				color: lineColor
-			});
+	    plotData.push({
+			data: value['seasons'],
+			label: index,
+			lines: { show: true },
+			//points: { show: true },
+			hoverable: true,
+			clickable: true,
+			color: lineColor
 		});
-		
-		plotData.reverse();
-		
-		var plotOptions = {
-			grid: { 
-				hoverable:true, 
-				clickable: true,
-				backgroundColor: { colors: ["#faf8f6", "#e0e0e0"] }
-			},
-			legend: { show: false }
-		}
-
-		var stack = 0, bars = true, lines = false, steps = false;
-		
-		
-	    $.plot($("#fig"), plotData, plotOptions);
-	};
-
-	plotWithOptions('HR');
+	});
 	
-	$('.chartStat').bind('click', function(event) {
-		plotWithOptions(event.target.innerHTML)
-	})
+	plotData.reverse();
 	
-	//$("#content td[title]").tooltip();
-	
-	function showTooltip(event, pos, item) {
-		if(item == null) $('.tooltip').hide();
-		else {
-			var tooltip = $('.tooltip');
-			var leaderIndex = item.series.label;
-			tooltip.html(
-				LeaderCareers[leaderIndex]['name'] + "<br />" +
-				"Career HRs: " + LeaderCareers[leaderIndex]['total'] + "<br />" +
-				"Rank: " + (leaderIndex + 1));
-			
-			$('.tooltip').css({left: pos.pageX - (tooltip.width() / 2), top: pos.pageY - (tooltip.height() + 20)}).show();
-		}
+	var plotOptions = {
+		grid: { 
+			hoverable:true, 
+			clickable: true,
+			borderWidth: 1,
+			borderColor: "#bbbbbb",
+			backgroundColor: { colors: ["#faf8f6", "#e0e0e0"] }
+		},
+		legend: { show: false }
 	}
 	
+    $.plot($("#fig"), plotData, plotOptions);
+};
+
+function showTooltip(event, pos, item) {
+	if(item == null) $('.tooltip').hide();
+	else {
+		var tooltip = $('.tooltip');
+		var leaderIndex = item.series.label;
+		tooltip.html(
+			LeaderCareers[leaderIndex]['name'] + "<br />" +
+			"Career " + FieldAbbrev + "s: " + LeaderCareers[leaderIndex]['total'] + "<br />" +
+			"Rank: " + (leaderIndex + 1));
+		
+		$('.tooltip').css({left: pos.pageX - (tooltip.width() / 2), top: pos.pageY - (tooltip.height() + 20)}).show();
+	}
+}
+
+function bindTooltips() {
 	$('#fig').bind('plothover', function (event, pos, item) {
 		showTooltip(event, pos, item);
 	});
 	$('#fig').bind('plotclick', function (event, pos, item) {
 		showTooltip(event, pos, item);
 	});
-	
-	
-})
+}
+
+
+
+
 
 </script>
 
