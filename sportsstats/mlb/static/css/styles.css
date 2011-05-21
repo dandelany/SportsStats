@@ -72,11 +72,12 @@ body {
 }
 
 #content {
-	margin: 0 42px;
+	margin: 0 40px;
 }
 #fig {
-  width: 870px;
+  width: 100%;
   height: 250px;
+  margin-left: -10px;
 }
 #content table {
 	width: 550px;
