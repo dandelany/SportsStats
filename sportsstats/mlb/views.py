@@ -5,52 +5,89 @@ from django.core import serializers
 from django.http import HttpResponse, Http404
 import json
 
-
-def index(request):
-	homeRunLeaders = PlayerBattingCareer.objects.order_by('-Homeruns')[:30]
-	
-	leaderCareers = []
-	leaderIDs = []
-	
-	for leader in homeRunLeaders:
-		playerID = leader.Player.PlayerID
-		
-		if playerID not in leaderIDs:
-			leaderCareer = leader.Player.getCareerStats('Homeruns', True)
-			leaderCareers.append(leaderCareer)
-			leaderIDs.append(playerID)	
-	
-	leaderCareersJSON = json.dumps(leaderCareers)
-	
-	return render_to_response('mlb/index.html', 
-		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
-		'homeRunLeaders': homeRunLeaders,
-		'leaderCareersJSON':leaderCareersJSON})
-
-def leaderApi(request, fieldAbbrev):
+def getLeaderCareerYears(fieldAbbrev):
 	
 	thisField = PlayerBattingCareer.fieldLookup('abbrev', fieldAbbrev)
-	if thisField != False:
+	leaders = getLeaderCareers(fieldAbbrev)
 	
-		leaders = PlayerBattingCareer.objects.order_by('-' + thisField['fieldName'])[:30]
+	if leaders != False:
 		leaderCareers = []
 		leaderIDs = []
-	
+		
 		for leader in leaders:
 			playerID = leader.Player.PlayerID
 		
 			if playerID not in leaderIDs:
 				leaderCareer = leader.Player.getCareerStats(thisField['fieldName'], True)
 				leaderCareers.append(leaderCareer)
-				leaderIDs.append(playerID)	
+				leaderIDs.append(playerID)
+		
+		return leaders, leaderCareers
+	else:
+		return False, False
+
+def getLeaderCareers(fieldAbbrev):
+	thisField = PlayerBattingCareer.fieldLookup('abbrev', fieldAbbrev)
+	if thisField != False:
+		leaders = PlayerBattingCareer.objects.order_by('-' + thisField['fieldName'])[:30]
+		return leaders
+	else:
+		return False
+
+def makeLeaderStatsRows(leaders):
+	leaderStatsRows = []
+	leaderNames = []
+	for leader in leaders:
+		leaderNames.append('<a href="/mlb/player/' + leader.Player.PlayerID + '/">' + str(leader) + '</a>')
 	
+	i=0
+	for leader in leaders.values():
+		leaderStatsRow = []
+		leaderStatsRow.append(leaderNames[i])
+		for field in PlayerBattingCareer.FIELDS:
+			if field['fieldName'] != 'Player' and field['fieldName'] != 'GamesBatting':
+				leaderStatsRow.append(leader[field['fieldName']])
+		leaderStatsRows.append(leaderStatsRow)
+		i+=1
+	
+	return leaderStatsRows
+
+def index(request):
+	leaders, leaderCareers = getLeaderCareerYears('HR')
+	
+	leaderCareersJSON = json.dumps(leaderCareers)
+	
+	leaderStatsRows = makeLeaderStatsRows(leaders)
+	
+	return render_to_response('mlb/index.html', 
+		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
+		'homeRunLeaders': leaders,
+		'leaderCareersJSON':leaderCareersJSON,
+		'leaderStatsRows':leaderStatsRows})
+
+def leaderApi(request, fieldAbbrev):
+	
+	leaders, leaderCareers = getLeaderCareerYears(fieldAbbrev)
+	
+	if leaders != False:
+		#leadersJSON = serializers.serialize('json', leaders, ensure_ascii=False)
 		leaderCareersJSON = json.dumps(leaderCareers)
-	
+		#leaderCareerStatsJSON = '{"leaders": '+leadersJSON+', "leaderCareers":'+leaderCareersJSON+'}'
+		
 		return HttpResponse(leaderCareersJSON)
 	
 	else:
 		raise Http404
-		
+
+def leaderTableApi(request, fieldAbbrev):
+	leaderCareers = getLeaderCareers(fieldAbbrev)
+	
+	leaderStatsRows = makeLeaderStatsRows(leaderCareers)
+	
+	return render_to_response('mlb/table.html', 
+		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
+		'leaderStatsRows':leaderStatsRows})
+
 def player(request, playerID):
 	
 	try:

@@ -10,7 +10,8 @@ urlpatterns = patterns('',
 	(r'^mlb/$', 'mlb.views.index'),
 	(r'^mlb/player/(?P<playerID>[a-z]+\d{2})/$', 'mlb.views.player'),
 	
-	(r'^mlb/api/(?P<fieldAbbrev>[A-Za-z]+)/$', 'mlb.views.leaderApi'),
+	(r'^mlb/leaderApi/(?P<fieldAbbrev>[A-Za-z]+)/$', 'mlb.views.leaderApi'),
+	(r'^mlb/leaderTableApi/(?P<fieldAbbrev>[A-Za-z]+)/$', 'mlb.views.leaderTableApi'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),

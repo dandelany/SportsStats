@@ -1,4 +1,6 @@
 {% load static %}
+{% load getattribute %}
+
 {% get_static_prefix as STATIC_PREFIX %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -55,16 +57,27 @@
 	
 	
 	
-	<table border="0" cellpadding="4" cellspacing="0">
+	<table border="0" cellpadding="4" cellspacing="0" id="leaderCareers">
 		<thead>
 			<tr>
-				<td title="Tooltip text">Player</td>
+				<td>Rank</td>
+				{% for field in playerBattingCareerFields %}
+					{% if field.fieldName != 'GamesBatting' %}
+						<td>{{ field.abbrev }}</td>
+					{% endif %}
+				{% endfor %}
+				
 			</tr>
 		</thead>
 		<tbody>
-		    {% for leader in homeRunLeaders %}
+		    {% for leaderRow in leaderStatsRows %}
 		    <tr>
-		        <td class="teamCell"><a href="/mlb/player/{{ leader.Player.PlayerID }}/">{{ leader }}</a></td>
+				<td>{{ forloop.counter }}</td>
+				{% for stat in leaderRow %}
+					<td>{{ stat|safe }}</td>
+				{% endfor %}
+				
+
 		    </tr>
 		    {% endfor %}
 
@@ -78,6 +91,7 @@
 <script type="text/javascript">
 
 LeaderCareers = {{ leaderCareersJSON|safe }};
+Leaders = [];
 FieldAbbrev = "HR";
 
 $(function() {
@@ -88,11 +102,15 @@ $(function() {
 		var fieldAbbrev = $(this).html();
 		var fieldLongName = $(this).attr('longname');
 		if (fieldAbbrev) {
-			$.get('/mlb/api/'+fieldAbbrev+"/", function(data) {
+			$.get('/mlb/leaderApi/'+fieldAbbrev+"/", function(data) {
 				LeaderCareers = data;
 				plotLeaders();
 				updateFieldNamesOnPage(fieldAbbrev, fieldLongName);
-			}, 'json')
+			}, 'json');
+			
+			$.get('/mlb/leaderTableApi/'+fieldAbbrev+"/", function(data) {
+				$('table#leaderCareers').replaceWith(data);
+			});
 		}
 		return false;
 	});

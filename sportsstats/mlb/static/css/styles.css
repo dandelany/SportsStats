@@ -80,20 +80,33 @@ body {
   margin-left: -10px;
 }
 #content table {
-	width: 550px;
+	width: 100%;
 	margin: 10px 0px;
-	border: 1px solid #AAA;
 	text-align: center;
+}
+#content table thead {
+	-moz-box-shadow: 0 2px 3px #111111;
+    background: url("/static/images/tablehead.jpg") repeat top center;
 }
 #content table thead tr{
-	background: #AAA;
-	text-align: center;
+	color: #DDDDDD;
+    font-size: 15px;
+    text-align: left;
+    text-shadow: 1px 1px 4px #000000;
+}
+#content table thead tr td {
+	border-bottom: 1px solid #6C95C2;
+}
+#content table tbody {
+	background: url('/static/images/tablebg.jpg') repeat top center;
 }
 #content table tbody tr:nth-child(odd){
-	background-color: #d5edff;
-
+	/* fallback for browsers that don't support rgba */
+	background-color: rgb(220, 220, 220);
+	
+	background-color: rgba(50, 50, 50, 0.12);
 }
-#content table tbody td.teamCell {
+#content table tbody td {
 	text-align: left;
 }
 div.tooltip {
