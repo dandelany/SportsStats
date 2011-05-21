@@ -1,0 +1,26 @@
+<table border="0" cellpadding="4" cellspacing="0" id="leaderCareers">
+	<thead>
+		<tr>
+			<td>Rank</td>
+			{% for field in playerBattingCareerFields %}
+				{% if field.fieldName != 'GamesBatting' %}
+					<td>{{ field.abbrev }}</td>
+				{% endif %}
+			{% endfor %}
+			
+		</tr>
+	</thead>
+	<tbody>
+	    {% for leaderRow in leaderStatsRows %}
+	    <tr>
+			<td>{{ forloop.counter }}</td>
+			{% for stat in leaderRow %}
+				<td>{{ stat|safe }}</td>
+			{% endfor %}
+			
+
+	    </tr>
+	    {% endfor %}
+
+	</tbody>
+</table>
