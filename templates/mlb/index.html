@@ -45,12 +45,13 @@
 	<div id="content">
 	<h2 style="margin-bottom:0;">Career <span class="statFieldLongName">Home Run</span> Leaders</h2>
 	
-	<strong>Chartable Stats: </strong>
+	<span class="smallgrey">
 	{% for field in playerBattingCareerFields %}
-		{% if field.fieldName != 'Player' %}
+		{% if field.fieldName != 'Player' and field.fieldName != 'GamesBatting' %}
 			<a href="#" class="chartStat" field="{{ field.fieldName }}" longname="{{ field.longName }}">{{ field.abbrev }}</a> | 
 		{% endif %}
 	{% endfor %}
+	</span>
 	
 	<div id="fig"></div>
 	
@@ -62,7 +63,7 @@
 				<td>Rank</td>
 				{% for field in playerBattingCareerFields %}
 					{% if field.fieldName != 'GamesBatting' %}
-						<td>{{ field.abbrev }}</td>
+						<td><a href="#" class="chartStat" field="{{ field.fieldName }}" longname="{{ field.longName }}">{{ field.abbrev }}</a></td>
 					{% endif %}
 				{% endfor %}
 				
@@ -97,7 +98,7 @@ $(function() {
 	plotLeaders();
 	bindTooltips();
 	
-	$('a.chartStat').bind('click', function (event) {
+	$('a.chartStat').live('click', function (event) {
 		var fieldAbbrev = $(this).html();
 		var fieldLongName = $(this).attr('longname');
 		if (fieldAbbrev) {

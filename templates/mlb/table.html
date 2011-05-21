@@ -4,7 +4,7 @@
 			<td>Rank</td>
 			{% for field in playerBattingCareerFields %}
 				{% if field.fieldName != 'GamesBatting' %}
-					<td>{{ field.abbrev }}</td>
+					<td><a href="#" class="chartStat" field="{{ field.fieldName }}" longname="{{ field.longName }}">{{ field.abbrev }}</a></td>
 				{% endif %}
 			{% endfor %}
 			

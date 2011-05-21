@@ -74,6 +74,10 @@ body {
 #content {
 	margin: 0 40px;
 }
+.smallgrey a {
+	color: #666;
+	font-size: 9pt;
+}
 #fig {
   width: 100%;
   height: 250px;
@@ -94,6 +98,9 @@ body {
     text-align: left;
     text-shadow: 1px 1px 4px #000000;
 }
+#content table thead tr a{
+	color: #DDDDDD;
+}
 #content table thead tr td {
 	border-bottom: 1px solid #6C95C2;
 }
@@ -108,6 +115,9 @@ body {
 }
 #content table tbody td {
 	text-align: left;
+}
+#content table tbody td a {
+	color: #223142;
 }
 div.tooltip {
 	display: none;
