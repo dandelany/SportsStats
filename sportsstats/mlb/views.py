@@ -1,5 +1,5 @@
 from __future__ import division
-from models import Player, PlayerBattingSeason, PlayerBattingCareer
+from models import Player, PlayerBattingSeason, PlayerBattingCareer, PlayerBattingCareerPercentile
 from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import HttpResponse, Http404
@@ -52,18 +52,73 @@ def makeLeaderStatsRows(leaders):
 	
 	return leaderStatsRows
 
+def makeLeaderPercentileRows(leaders):
+	pTiles = PlayerBattingCareerPercentile.objects.order_by('-Percentile').values()
+	leaderDicts = leaders.values()
+	leaderPTileDict = {}
+	
+	for field in PlayerBattingCareer.FIELDS:
+		fieldName = field['fieldName']
+		if fieldName != 'Player' and fieldName != 'GamesBatting':
+			sortedLeaders = sorted(leaderDicts, key=lambda k: k[fieldName], reverse=True)
+			pTileIndex = 0
+		
+			for thisPlayer in sortedLeaders:
+				statValue = thisPlayer[fieldName]
+				playerID = thisPlayer['Player_id']
+			
+				if playerID not in leaderPTileDict:
+					leaderPTileDict[playerID] = []
+			
+				while(pTiles[pTileIndex+1][fieldName] > statValue):
+					pTileIndex += 1
+					if pTileIndex >= len(pTiles):
+						break
+			
+				thisPTile = pTiles[pTileIndex]['Percentile']
+				leaderPTileDict[playerID].append(thisPTile)
+	
+	leaderPTileRows = []
+	for leader in leaderDicts:
+		leaderPTiles = leaderPTileDict[leader['Player_id']]
+		leaderPTiles.insert(0, None)
+		leaderPTileRows.append(leaderPTiles)
+	
+	return leaderPTileRows
+
+def combineStatsAndPTiles(stats, pTiles):
+	statsAndPTiles = []
+	for i in range(0, len(stats)):
+		thisRow = []
+		for j in range(0, len(stats[i])):
+			thisStat = {}
+			thisStat['stat'] = stats[i][j]
+			if i < len(pTiles) and j < len(pTiles[i]):
+				thisStat['pTile'] = pTiles[i][j]
+			else:
+				thisStat['pTile'] = None
+			thisRow.append(thisStat)
+		
+		statsAndPTiles.append(thisRow)
+	return statsAndPTiles
+
 def index(request):
 	leaders, leaderCareers = getLeaderCareerYears('HR')
 	
 	leaderCareersJSON = json.dumps(leaderCareers)
 	
 	leaderStatsRows = makeLeaderStatsRows(leaders)
+	leaderPTileRows = makeLeaderPercentileRows(leaders)
+	
+	leaderStatsAndPTiles = combineStatsAndPTiles(leaderStatsRows, leaderPTileRows)
 	
 	return render_to_response('mlb/index.html', 
 		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
 		'homeRunLeaders': leaders,
-		'leaderCareersJSON':leaderCareersJSON,
-		'leaderStatsRows':leaderStatsRows})
+		'leaderCareersJSON': leaderCareersJSON,
+		'leaderStatsRows': leaderStatsRows,
+		'leaderPTileRows': leaderPTileRows,
+		'leaderStatsAndPTiles': leaderStatsAndPTiles})
 
 def leaderApi(request, fieldAbbrev):
 	
@@ -83,10 +138,14 @@ def leaderTableApi(request, fieldAbbrev):
 	leaderCareers = getLeaderCareers(fieldAbbrev)
 	
 	leaderStatsRows = makeLeaderStatsRows(leaderCareers)
+	leaderPTileRows = makeLeaderPercentileRows(leaderCareers)
+	
+	leaderStatsAndPTiles = combineStatsAndPTiles(leaderStatsRows, leaderPTileRows)
 	
 	return render_to_response('mlb/table.html', 
 		{'playerBattingCareerFields': PlayerBattingCareer.FIELDS,
-		'leaderStatsRows':leaderStatsRows})
+		'leaderStatsRows':leaderStatsRows,
+		'leaderStatsAndPTiles': leaderStatsAndPTiles})
 
 def player(request, playerID):
 	

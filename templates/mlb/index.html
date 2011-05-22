@@ -70,16 +70,22 @@
 			</tr>
 		</thead>
 		<tbody>
-		    {% for leaderRow in leaderStatsRows %}
-		    <tr>
+			
+			{% for leaderRow in leaderStatsAndPTiles %}
+			<tr>
 				<td>{{ forloop.counter }}</td>
-				{% for stat in leaderRow %}
-					<td>{{ stat|safe }}</td>
+				{% for statDict in leaderRow %}
+					{% if statDict.pTile != None %}
+					<td pTile="{{ statDict.pTile }}" class="pTile">
+					{% else %}
+					<td>
+					{% endif %}
+					{{ statDict.stat|safe }}</td>
 				{% endfor %}
 				
 
 		    </tr>
-		    {% endfor %}
+			{% endfor %}
 
 		</tbody>
 	</table>
@@ -110,11 +116,30 @@ $(function() {
 			
 			$.get('/mlb/leaderTableApi/'+fieldAbbrev+"/", function(data) {
 				$('table#leaderCareers').replaceWith(data);
+				colorPercentiles();
 			});
 		}
 		return false;
 	});
+	
+	colorPercentiles();
 })
+
+function colorPercentiles() {
+	pTileCells = $('td.pTile').each(function(cell) {
+	    var pTile = parseInt($(this).attr('pTile'));
+	    var colorPrefix;
+	    if(pTile >= 50) {
+	        colorPrefix = "rgba(121, 207, 127, ";
+	        pTile -= 50;
+	    } else {
+	        colorPrefix = "rgba(207, 123, 123, ";
+	    }
+
+	    var opacity = (pTile / 50) * 0.6;
+	    this.style.backgroundColor = colorPrefix + opacity + ")"
+	})
+}
 
 function updateFieldNamesOnPage(fieldAbbrev, fieldLongName) {
 	$('.statFieldLongName').html(fieldLongName);

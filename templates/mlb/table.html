@@ -11,16 +11,21 @@
 		</tr>
 	</thead>
 	<tbody>
-	    {% for leaderRow in leaderStatsRows %}
-	    <tr>
+	    {% for leaderRow in leaderStatsAndPTiles %}
+		<tr>
 			<td>{{ forloop.counter }}</td>
-			{% for stat in leaderRow %}
-				<td>{{ stat|safe }}</td>
+			{% for statDict in leaderRow %}
+				{% if statDict.pTile != None %}
+				<td pTile="{{ statDict.pTile }}" class="pTile">
+				{% else %}
+				<td>
+				{% endif %}
+				{{ statDict.stat|safe }}</td>
 			{% endfor %}
 			
 
 	    </tr>
-	    {% endfor %}
+		{% endfor %}
 
 	</tbody>
 </table>
