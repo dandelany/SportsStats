@@ -128,16 +128,17 @@ $(function() {
 function colorPercentiles() {
 	pTileCells = $('td.pTile').each(function(cell) {
 	    var pTile = parseInt($(this).attr('pTile'));
-	    var colorPrefix;
+	    var colorPrefix, opacity;
 	    if(pTile >= 50) {
 	        colorPrefix = "rgba(121, 207, 127, ";
 	        pTile -= 50;
+			opacity = (pTile / 50) * 0.6;
 	    } else {
 	        colorPrefix = "rgba(207, 123, 123, ";
+			opacity = (((pTile * -1.0) + 49) / 50) * 0.6;
 	    }
-
-	    var opacity = (pTile / 50) * 0.6;
-	    this.style.backgroundColor = colorPrefix + opacity + ")"
+	
+	    this.style.backgroundColor = colorPrefix + opacity.toFixed(3) + ")"
 	})
 }
 

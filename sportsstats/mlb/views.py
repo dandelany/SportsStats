@@ -53,13 +53,25 @@ def makeLeaderStatsRows(leaders):
 	return leaderStatsRows
 
 def makeLeaderPercentileRows(leaders):
+	PER_AB_FIELDNAMES = [
+        'Runs', 'Hits', 'Doubles', 'Triples', 'Homeruns','RunsBattedIn', 'StolenBases', 'CaughtStealing',
+        'BaseOnBalls', 'Strikeouts', 'IntentionalWalks', 'HitByPitch', 'SacrificeHits', 'SacrificeFlies',
+        'GroundedIntoDouble'
+    ]
+
 	pTiles = PlayerBattingCareerPercentile.objects.order_by('-Percentile').values()
 	leaderDicts = leaders.values()
 	leaderPTileDict = {}
 	
+	for leader in leaderDicts:
+		atBats = leader['AtBats']
+		for fieldName in PER_AB_FIELDNAMES:
+			leader[fieldName] = float(leader[fieldName]) / float(atBats)
+	
 	for field in PlayerBattingCareer.FIELDS:
 		fieldName = field['fieldName']
 		if fieldName != 'Player' and fieldName != 'GamesBatting':
+			
 			sortedLeaders = sorted(leaderDicts, key=lambda k: k[fieldName], reverse=True)
 			pTileIndex = 0
 		

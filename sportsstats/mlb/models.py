@@ -180,27 +180,81 @@ class PlayerBattingCareer(models.Model):
 	def __unicode__(self):
 		return str(self.Player)
 
+class PlayerBattingCareerPerAB(models.Model):
+	Player = models.ForeignKey(Player, verbose_name='Player')
+	AtBats = models.IntegerField(verbose_name='AB')
+	
+	Runs = models.FloatField(verbose_name='R')
+	Hits = models.FloatField(verbose_name='H')
+	Doubles = models.FloatField(verbose_name='D')
+	Triples = models.FloatField(verbose_name='T')
+	Homeruns = models.FloatField(verbose_name='HR')
+	RunsBattedIn = models.FloatField(verbose_name='RBI')
+	StolenBases = models.FloatField(verbose_name='SB')
+	CaughtStealing = models.FloatField(verbose_name='CS')
+	BaseOnBalls = models.FloatField(verbose_name='BOB')
+	Strikeouts = models.FloatField(verbose_name='SO')
+	IntentionalWalks = models.FloatField(verbose_name='IW')
+	HitByPitch = models.FloatField(verbose_name='HBP')
+	SacrificeHits = models.FloatField(verbose_name='SH')
+	SacrificeFlies = models.FloatField(verbose_name='SF')
+	GroundedIntoDouble = models.FloatField(verbose_name='GIDP')
+
+	FIELDS = [
+		{ 'abbrev': 'Player', 'fieldName': 'Player', 'longName': 'Player' },
+		{ 'abbrev': 'AB', 'fieldName': 'AtBats', 'longName': 'At Bats' },
+		{ 'abbrev': 'R', 'fieldName': 'Runs', 'longName': 'Runs' },
+		{ 'abbrev': 'H', 'fieldName': 'Hits', 'longName': 'Hits' },
+		{ 'abbrev': 'D', 'fieldName': 'Doubles', 'longName': 'Doubles' },
+		{ 'abbrev': 'T', 'fieldName': 'Triples', 'longName': 'Triples' },
+		{ 'abbrev': 'HR', 'fieldName': 'Homeruns', 'longName': 'Home Runs' },
+		{ 'abbrev': 'RBI', 'fieldName': 'RunsBattedIn', 'longName': 'Runs Batted In' },
+		{ 'abbrev': 'SB', 'fieldName': 'StolenBases', 'longName': 'Stolen Bases' },
+		{ 'abbrev': 'CS', 'fieldName': 'CaughtStealing', 'longName': 'Caught Stealing' },
+		{ 'abbrev': 'BOB', 'fieldName': 'BaseOnBalls', 'longName': 'Base On Balls' },
+		{ 'abbrev': 'SO', 'fieldName': 'Strikeouts', 'longName': 'Strikeouts' },
+		{ 'abbrev': 'IW', 'fieldName': 'IntentionalWalks', 'longName': 'Intentional Walks' },
+		{ 'abbrev': 'HBP', 'fieldName': 'HitByPitch', 'longName': 'Hit By Pitch' },
+		{ 'abbrev': 'SH', 'fieldName': 'SacrificeHits', 'longName': 'Sacrifice Hits' },
+		{ 'abbrev': 'SF', 'fieldName': 'SacrificeFlies', 'longName': 'Sacrifice Flies' },
+		{ 'abbrev': 'GIDP', 'fieldName': 'GroundedIntoDouble', 'longName': 'Grounded Into Double Play' }
+	]
+
+	@classmethod
+	def fieldLookup(cls, key, value):
+		def find(f, seq):
+			"""Return first item in sequence where f(item) == True."""
+			for item in seq:
+				if f(item): 
+					return item
+			return False
+
+		return find(lambda field: field[key] == value, cls.FIELDS)
+
+	def __unicode__(self):
+		return str(self.Player)
+
 class PlayerBattingCareerPercentile(models.Model):
 	Percentile = models.IntegerField(verbose_name='Ptile')
 
 	Games = models.IntegerField(verbose_name='G')
 	GamesBatting = models.IntegerField(verbose_name='GBatting')
 	AtBats = models.IntegerField(verbose_name='AB')
-	Runs = models.IntegerField(verbose_name='R')
-	Hits = models.IntegerField(verbose_name='H')
-	Doubles = models.IntegerField(verbose_name='D')
-	Triples = models.IntegerField(verbose_name='T')
-	Homeruns = models.IntegerField(verbose_name='HR')
-	RunsBattedIn = models.IntegerField(verbose_name='RBI')
-	StolenBases = models.IntegerField(verbose_name='SB')
-	CaughtStealing = models.IntegerField(verbose_name='CS')
-	BaseOnBalls = models.IntegerField(verbose_name='BOB')
-	Strikeouts = models.IntegerField(verbose_name='SO')
-	IntentionalWalks = models.IntegerField(verbose_name='IW')
-	HitByPitch = models.IntegerField(verbose_name='HBP')
-	SacrificeHits = models.IntegerField(verbose_name='SH')
-	SacrificeFlies = models.IntegerField(verbose_name='SF')
-	GroundedIntoDouble = models.IntegerField(verbose_name='GIDP')
+	Runs = models.FloatField(verbose_name='R')
+	Hits = models.FloatField(verbose_name='H')
+	Doubles = models.FloatField(verbose_name='D')
+	Triples = models.FloatField(verbose_name='T')
+	Homeruns = models.FloatField(verbose_name='HR')
+	RunsBattedIn = models.FloatField(verbose_name='RBI')
+	StolenBases = models.FloatField(verbose_name='SB')
+	CaughtStealing = models.FloatField(verbose_name='CS')
+	BaseOnBalls = models.FloatField(verbose_name='BOB')
+	Strikeouts = models.FloatField(verbose_name='SO')
+	IntentionalWalks = models.FloatField(verbose_name='IW')
+	HitByPitch = models.FloatField(verbose_name='HBP')
+	SacrificeHits = models.FloatField(verbose_name='SH')
+	SacrificeFlies = models.FloatField(verbose_name='SF')
+	GroundedIntoDouble = models.FloatField(verbose_name='GIDP')
 
 	FIELDS = [
 		{ 'abbrev': 'Ptile', 'fieldName': 'Percentile', 'longName': 'Percentile' },
