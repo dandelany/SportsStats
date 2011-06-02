@@ -56,6 +56,38 @@ class Player(models.Model):
 		career['total'] = colSum;
 		return career
 	
+	@staticmethod
+	def nameSuggest(nameSearch):
+			
+		numResults = 10
+		lastNames = Player.objects.filter(LastName__istartswith=nameSearch)
+		firstNames = Player.objects.filter(FirstName__istartswith=nameSearch)
+		
+		if(' ' in nameSearch):
+			multiWordFirstNameSearch = nameSearch.rpartition(' ')
+			multiWordLastNameSearch = nameSearch.partition(' ')
+			
+			# yes, this is a real variable name. have to cover four bases:
+			# first name first w/ multi-word first name, FNF w/ M-W last name, and same with LNF
+			fullNamesFirstFirstMultiFirst = Player.objects.filter(FirstName__istartswith=multiWordFirstNameSearch[0], 
+																  LastName__istartswith=multiWordFirstNameSearch[2])
+			fullNamesFirstFirstMultiLast = Player.objects.filter(FirstName__istartswith=multiWordLastNameSearch[0],
+																 LastName__istartswith=multiWordLastNameSearch[2])
+			fullNamesLastFirstMultiFirst = Player.objects.filter(FirstName__istartswith=multiWordFirstNameSearch[2], 
+																  LastName__istartswith=multiWordFirstNameSearch[0])
+			fullNamesLastFirstMultiLast = Player.objects.filter(FirstName__istartswith=multiWordLastNameSearch[2],
+																 LastName__istartswith=multiWordLastNameSearch[0])
+			
+			allNames = (firstNames | lastNames | fullNamesFirstFirstMultiFirst | fullNamesFirstFirstMultiLast |
+												fullNamesLastFirstMultiFirst | fullNamesLastFirstMultiLast)[:numResults]
+			
+			return list(allNames.values('FirstName','LastName','PlayerID'))
+			
+		else:
+		
+			allNames = (lastNames | firstNames)[:numResults]
+			return list(allNames.values('FirstName','LastName','PlayerID'))
+	
 	def __unicode__(self):
 		return self.FirstName + " " + self.LastName
 

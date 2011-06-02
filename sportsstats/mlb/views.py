@@ -159,6 +159,11 @@ def leaderTableApi(request, fieldAbbrev):
 		'leaderStatsRows':leaderStatsRows,
 		'leaderStatsAndPTiles': leaderStatsAndPTiles})
 
+def nameSearchApi(request, nameSearch):
+	names = Player.nameSuggest(nameSearch)
+	namesJSON = json.dumps(names)
+	return HttpResponse(namesJSON)
+
 def player(request, playerID):
 	
 	try:

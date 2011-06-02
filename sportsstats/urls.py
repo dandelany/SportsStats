@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 	
 	(r'^mlb/leaderApi/(?P<fieldAbbrev>[A-Za-z]+)/$', 'mlb.views.leaderApi'),
 	(r'^mlb/leaderTableApi/(?P<fieldAbbrev>[A-Za-z]+)/$', 'mlb.views.leaderTableApi'),
+	(r'^mlb/nameSearchApi/(?P<nameSearch>[A-Za-z ]{1,40})$', 'mlb.views.nameSearchApi'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
